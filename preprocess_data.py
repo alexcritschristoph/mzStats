@@ -3,6 +3,8 @@ from  sklearn.metrics.pairwise import cosine_similarity
 import math
 import numpy as np
 import sys
+from scipy.sparse import coo_matrix
+from sys import getsizeof
 
 def preprocess_sample(sample):
 	print "Reading " + sample
@@ -46,7 +48,7 @@ def vectorize_peak(peak_min, peak_max, sample_data):
 	peak_vectors = {}
 	print "Creating peak vectors..."
 	for peak in sample_data:
-		peak_vector = peak_vector = np.zeros((1,vector_length), dtype=np.float32)
+		peak_vector = np.zeros((1,vector_length), dtype=np.float32)
 	 	i = 0
 		for p in sample_data[peak]['mzs']:
 			pos = int((math.floor(p*10)/10 - peak_min) * 10)
@@ -73,7 +75,7 @@ def vectorize_peak(peak_min, peak_max, sample_data):
 			if abs(sample_data[peak]['base_mz'] - sample_data[peak2]['base_mz']) <= 2:
 				sim = cosine_similarity(peak_vectors[peak], peak_vectors[peak2])
 				sims.append(sim[0][0])
-				if sim[0][0] >= 0.97:
+				if sim[0][0] >= 0.97:	
 					#Similar; take the peak with the higher intensity.
 					if sample_data[peak]['precursor_intensity'] > sample_data[peak2]['precursor_intensity']:
 						peak_vectors_unique[i] = peak			
@@ -91,11 +93,11 @@ def vectorize_peak(peak_min, peak_max, sample_data):
 	final_peaks = {}
 	for peak in peak_vectors_unique:
 		peak_data = sample_data[peak]
-		peak_data['vector'] = peak_vectors[peak]
+		peak_data['vector'] = coo_matrix(peak_vectors[peak]) #Store only as a COO matrix
 		final_peaks[peak] = peak_data
 
 	peak_vectors = None
-
+	#Save peaks to disk in large X (samples) by n array; 
 	return final_peaks
 
 
@@ -118,7 +120,7 @@ def compare_samples(samples_data):
 			for compound_group in compounds:
 				mass_diff = sample_data[peak]['base_mz'] - compound_group[0]['base_mz']
 				if mass_diff <= 2 and mass_diff >= -2:
-					sim = cosine_similarity(sample_data[peak]['vector'], compound_group[0]['vector'])
+					sim = cosine_similarity(sample_data[peak]['vector'].toarray(), compound_group[0]['vector'].toarray())
 					if sim[0][0] >= 0.97: #Should this be slightly less stringent being between samples?
 						compounds[i].append(sample_data[peak])
 						found = True
@@ -130,20 +132,45 @@ def compare_samples(samples_data):
 	print len(compounds)
 	#Write data table to CSV
 
-	#Calculate cosine similarity distance matrix
+	line = "Compound,"
+	for sample in samples_data:
+		line = line + sample + ","
+	line.rstrip(",")
 	
-	#Cluster, PCoA
+	f = open('./compound_table.txt', 'a+')
+	f.write(line + "\n")
 
-	#Output for DiffAbund
+	for compound_group in compounds:
 
-	#Create mzXMLs for differentially expressed peaks only for GNPS
+		masses = []
+		for compound in compound_group:
+			masses.append(compound['base_mz'])
 
+		line = str(np.mean(masses)) + "+-" + str(round(np.std(masses, ddof=0),4)) + ","
+		for sample in samples_data:
+			found = False
+			for compound in compound_group:
+				if sample == compound['sample']:
+					found = True
+					break
+			if found:
+				line = line + str(compound['precursor_intensity']) + ","
+			else:
+				line = line + "0,"
+		line = line.rstrip(",")
+		f.write(line + "\n")
+
+	f.close()
 
 def main():
 	#Read in samples
-	#mapping_file = sys.argv[1]
-	samples = ['../LG60FAVA_2_1_071816.mzXML', '../LG60FAVA_2_2_071816.mzXML','../LG60FAVA_4_1_071816.mzXML', '../LG60FAVA_4_2_071816.mzXML', '../LGFB1_95D_101916.mzXML', '../LGFB2_95D_101916.mzXML', '../LGFB3_95D_101916.mzXML', '../LGFB4_95D_101916.mzXML']
-
+	mapping_file = sys.argv[1]
+	#get samples
+	samples = []
+	f = open(mapping_file)
+	for line in f.readlines():
+		samples.append(line.split("\t")[0])
+	f.close()
 
 	#Preprocess samples
 	peak_min = 999999999
@@ -157,11 +184,15 @@ def main():
 			peak_max = new_max
 		peak_data[sample] = new_peak_data
 
+	print "***"
+	print getsizeof(peak_data)
 	#Calculate vectors for all samples
 	for sample in peak_data:
 		peak_data[sample] = vectorize_peak(peak_min, peak_max, peak_data[sample])
 
+	print getsizeof(peak_data)
 	print "Comparing samples..."
+	
 	#Compare samples
 	compare_samples(peak_data)
 
