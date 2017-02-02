@@ -11,6 +11,8 @@ Requirements:
 
 [Dereplicator](http://cab.spbu.ru/software/dereplicator/) - for comparing MS2 to predicted NRPS structures.
 
+[norine](http://bioinfo.lifl.fr/norine/result.jsp?ID=NOR01048) - a database of known NRPs.
+
 [PRISM](https://github.com/magarveylab/prism-releases) - for predicting compound structures from genomes.
 
 Skinnider MA, Dejong CA, Rees PN, Johnston CW, Li H, Webster ALH, Wyatt MA, Magarvey NA (2015). Genomes to natural products PRediction Informatics for Secondary Metabolomes (PRISM). Nucleic Acids Research, 16, 9645-62. doi: 10.1093/nar/gkv1012
