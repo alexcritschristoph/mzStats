@@ -3,6 +3,8 @@ Statistical tools for comparing MS2 spectra of complex biological samples
 
 ##External resources
 
+[Dereplicator](http://cab.spbu.ru/software/dereplicator/) - for comparing MS2 to predicted NRPS structures.
+
 [PRISM](https://github.com/magarveylab/prism-releases) - for predicting compound structures from genomes.
 
 Skinnider MA, Dejong CA, Rees PN, Johnston CW, Li H, Webster ALH, Wyatt MA, Magarvey NA (2015). Genomes to natural products PRediction Informatics for Secondary Metabolomes (PRISM). Nucleic Acids Research, 16, 9645-62. doi: 10.1093/nar/gkv1012
