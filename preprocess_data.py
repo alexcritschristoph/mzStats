@@ -113,7 +113,7 @@ def vectorize_peak(peak_min, peak_max, sample_data, sample_name):
 				sim = fast_cosine(peak_vectors[scan], peak_vectors[scan2[0]])
 				f.write(str(sim) + " ")
 
-				if sim >= 0.70:
+				if sim >= 0.90:
 					peak_vectors_unique[i].append(scan)
 					found = True
 					break
@@ -148,9 +148,9 @@ def vectorize_peak(peak_min, peak_max, sample_data, sample_name):
 			consensus_peak = normalize(consensus_peak.reshape(1, -1), norm='l1')[0]
 
 			peak_data = sample_data[scan1]
-			peak_data['origin'] = "*" + str(peak_data['num']) + "*"
+			peak_data['origin'] = str(peak_data['num'])
 			for scan in scan_group:
-				peak_data['origin'] = peak_data['origin'] + ", (" + str(sample_data[scan]['num']) + ")"
+				peak_data['origin'] = peak_data['origin'] + "," + str(sample_data[scan]['num'])
 			peak_data['vector'] = csr_matrix(consensus_peak) #Store only as a COO matrix
 			peak_data['base_mz'] = biggest_mz
 
@@ -159,7 +159,7 @@ def vectorize_peak(peak_min, peak_max, sample_data, sample_name):
 			scan1 = scan_group[0]
 			peak_data = sample_data[scan1]
 			peak_data['vector'] = csr_matrix(peak_vectors[scan1]) #Store only as a COO matrix
-			peak_data['origin'] = "*" + str(peak_data['num']) + "*"
+			peak_data['origin'] = str(peak_data['num'])
 			final_peaks[scan1] = peak_data
 
 	return final_peaks
@@ -196,7 +196,7 @@ def compare_samples(samples_data, output_file):
 				#Calculate cosine similarity of these two scans' peak vectors
 				sim = fast_cosine_csr(compound['vector'], scan2['vector'])
 
-				if sim >= 0.70:	
+				if sim >= 0.90:	
 					compounds[i].append(compound)
 					found = True
 					break
@@ -228,9 +228,9 @@ def compare_samples(samples_data, output_file):
 
 		line = "compound_" + str(j) + "," + str(np.mean(masses)) + "+-" + str(round(np.std(masses, ddof=0),4)) + ","
 
-		f2.write("compound_" + str(j) + "," + str(np.mean(masses)) + "+-" + str(round(np.std(masses, ddof=0),4)) + ",")
+		f2.write("compound_" + str(j) + "|" + str(np.mean(masses)) + "+-" + str(round(np.std(masses, ddof=0),4)))
 		for compound in compound_group:
-			f2.write(compound['sample'] + "[" + compound['origin'] + "], ")
+			f2.write("|" + compound['sample'] + "$" + compound['origin'])
 		f2.write("\n")
 
 		for sample in samples_data:
