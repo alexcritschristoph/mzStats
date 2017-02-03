@@ -1,9 +1,16 @@
 # mzStats
 Statistical tools for comparing MS2 spectra of complex biological samples
 
+Requirements:
+*Python: pyteomics, matplotlib, numpy, scipy, sklearn, argparse.*
+
+*R: ggplot2, vegan, optparse.*
+
 ##External resources
 
-[Dereplicator](http://cab.spbu.ru/software/dereplicator/) - for comparing MS2 to predicted NRPS structures.
+[Dereplicator](http://cab.spbu.ru/software/dereplicator/) - for comparing MS2 to predicted spectra of all known NRPS. To use it on GNPS, [click here](http://gnps.ucsd.edu/ProteoSAFe/static/gnps-theoretical.jsp).
+
+[norine](http://bioinfo.lifl.fr/norine/result.jsp?ID=NOR01048) - a database of known NRPs.
 
 [PRISM](https://github.com/magarveylab/prism-releases) - for predicting compound structures from genomes.
 
@@ -20,3 +27,105 @@ Allard, Pierre-Marie, et al. "Integration of molecular networking and in-silico 
 [The Secondary Metabolite Bioinformatics Portal](http://www.secondarymetabolites.org/)
 
 [pep2path](http://pep2path.sourceforge.net/)
+
+## Tutorial
+ 
+
+#### Make your mapping file
+See `mapping_example.txt` for an example. The mapping file should have at least 3 columns: file, sample, and the first grouping column. You can add additional columns. I like to edit my mapping files in Excel, then copy and paste them into a text editor and save the file. Make sure that tabs and not spaces separate columns in the mapping file.
+
+#### Preprocess data to generate the compounds table.
+
+```
+python preprocess_data.py -i mapping_example.txt -o compounds_table.txt
+```
+
+Help: `python preprocess_data.py --help`.
+
+This command should generate the file `compounds_table.txt` in the current working directory. Open it in your text editor or Excel for browsing.
+
+#### Filter your compounds table. The filter command is: 
+
+```
+usage: filter_data.py [-h] -i INPUT -m MAPPING [-c CONTROL] [-z MIN_MZ]
+                      [--filter_singletons]
+
+Filters an MZstats compound table by removing compounds found in controls,
+small compounds, and singletons.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Path to input compound table
+  -m MAPPING, --mapping MAPPING
+                        Path to input mapping file
+  -c CONTROL, --control CONTROL
+                        Name of control samples in mapping file's third column
+                        - subtracts any compound found in these controls
+  -z MIN_MZ, --min_mz MIN_MZ
+                        Minimum mz to retain in the compound table
+  --filter_singletons
+```
+
+For example, to remove any compounds found in Media samples (a grouping in column 3 of our mapping file from the example), all singletons, and all compounds smaller than 400 mz:
+
+```
+python filter_data.py -i compounds_table.txt -m mapping_example.txt -c Media -z 400 --filter_singletons
+```
+
+That command will create the file: `compound_table_filtered.txt` in the local directory. This is the new compound table with just the compounds that pass the filter. If it already exists, it will overwrite it. 
+
+#### Find compounds unique to specific conditions.
+To find compounds which are present in one set of samples but not in others (say, to identify "species-specific" compounds, or compounds producced only in interactions), use the command:
+
+```
+python unique_compounds.py -i compounds_table_filtered.txt -c VR4 -m mapping_example.txt
+```
+
+Where "VR4" is a group in the mapping file's 3rd column. This command will identify compounds found in ALL VR4 samples and *no other samples*. If perhaps you want to identify compounds found in at least 2 VR4 samples, you could run:
+
+```
+python unique_compounds.py -i compounds_table_filtered.txt -c VR4 -m mapping_example.txt -n 2
+```
+
+Note that you can also run this command on an *unfiltered* compound table, like so:
+
+
+```
+python unique_compounds.py -i compounds_table.txt -c VR4 -m mapping_example.txt -n 2
+```
+
+#### Create PCoA's and run statistical tests
+
+This is the only portion that requires R (and the R packages vegan, ggplot2, and optparse). It creates a PCoA of the chemical composition data using two distance metrics: bray-curtis (which treats your values as continuous) or jaccard (which treats them as either a 0 or a 1). Jaccard is recommended. This script also runs a statistical test called [ANOSIM](https://en.wikipedia.org/wiki/Analysis_of_similarities) which tests the null hypothesis that "the similarity between groups is greater or equal to the similarity within the groups". In other words, it tests whether your groups are more similar to themselves (within group) than to the other groups in terms of chemical composition. 
+
+To create Principle Coordinate Analysis plots of your data, run:
+
+```
+Rscript statistical_tests.-f compounds_table.txt -m mapping_example.txt -c grouping -g grouping
+```
+
+Where `-c` refers to the "category" **column name** that the ANOSIM test will be run on, and `-g` refers to the "grouping" **column name** that the PCoA will be colored by. Note that in this case it is "grouping" - what we've named the third column in the mapping file. Down below is an example where we run the same script except on the "bacillus_vs_all" column. 
+
+You can also do your statistics on a filtered compounds table:
+
+```
+Rscript statistical_tests.-f compounds_table_filtered.txt -m mapping_example.txt -c bacillus_vs_all -g bacillus_vs_all
+```
+
+If you'd like to change the look or style of the PCoA's feel free to edit this R script! It is very simple and easy to edit if you've used R or ggplot2 before.
+
+
+#### Example: Finding compounds produced during interactions.
+
+We can combine the above in a practical example: identifying compounds produced in an interaction that are not produced in either of the two individual species. In our dataset we have 3 replicates from a species VR22 (called "Streptomyces_sp_C38" in the mapping file) and 3 replicates from a species VR11 (called "Lysinibacillus_sp_CH19" in the mapping file), along with 2 replicates of their interacting colonies called "VR11-VR22". To identify compounds found in the interaction replicates but not the others, run:
+
+```
+python unique_compounds.py -i compounds_table.txt -c VR4 -m mapping_example.txt -n 2
+```
+
+And you will find that there are two compounds found in both interaction replicates but not in other samples in the table.
+
+#### Generate an mzXML from a compounds table
+
+Coming soon...
