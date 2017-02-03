@@ -30,6 +30,20 @@ Allard, Pierre-Marie, et al. "Integration of molecular networking and in-silico 
 
 ## Tutorial
  
+#### Viewing your data in MZmine
+
+[MZmine](http://mzmine.github.io/) is a program for viewing and exploring tandem MS-MS data. It has been installed on the lab Mac computer.
+To explore your data, open up the program. then click on the menu "Raw data methods" and click "Raw data import". Import your mzXML files here. It will take a few minutes to process the samples. In the left hand portion of your screen, you should see your files listed. Clicking the arrows next to them will show you a list of scans sorted by *scan number* in the file, like this:
+![image1](http://i.imgur.com/bgdfnBc.png)
+
+You can double click on each scan to see a view of the scan, like this:
+![image2](http://i.imgur.com/vxXN4RU.png)
+
+You can also see a very useful 3d view of mz vs retention time by clicking on an entire file, and then clicking on Visualization, and then selecting 3D visualizer. Hit auto-range and select ok:
+![image2](http://i.imgur.com/JedavdE.png)
+
+
+MZmine is really useful for exploring your scans and looking at an overview of your data.
 
 #### Make your mapping file
 See `mapping_example.txt` for an example. The mapping file should have at least 3 columns: file, sample, and the first grouping column. You can add additional columns. I like to edit my mapping files in Excel, then copy and paste them into a text editor and save the file. Make sure that tabs and not spaces separate columns in the mapping file.
@@ -42,7 +56,7 @@ python preprocess_data.py -i mapping_example.txt -o compounds_table.txt
 
 Help: `python preprocess_data.py --help`.
 
-This command should generate the file `compounds_table.txt` in the current working directory. Open it in your text editor or Excel for browsing.
+This command should generate the file `compounds_table.txt` in the current working directory. Open it in your text editor or Excel for browsing. The value for each compound in each sample is the *largest MS1 precursor peak* among all scans for that sample which were identified as this compound. 
 
 #### Filter your compounds table. The filter command is: 
 
@@ -126,6 +140,12 @@ python unique_compounds.py -i compounds_table.txt -c VR4 -m mapping_example.txt 
 
 And you will find that there are two compounds found in both interaction replicates but not in other samples in the table.
 
-#### Generate an mzXML from a compounds table
+#### How do I see the scan for a compound?
 
-Coming soon...
+`Preprocess_data.py` created your compounds table and it also created another file called *your_compounds_file_name.txt_spectra.txt* at the same time. If we open this file, the lines will look something like:
+
+```
+compound_7|159.013472116+-0.0|../MS/011316_Alex_41.mzXML$485|../MS/011316_Alex_25.mzXML$302,15,208,113,394,671,486,767|../MS/011316_Alex_15.mzXML$44,252,553,353,151,453,797|../MS/011316_Alex_26.mzXML$216,788,691,588|../MS/011316_Alex_21.mzXML$495,403,309,587,680|../MS/011316_Alex_16.mzXML$311,120,216,22,497,405,801,589,684|../MS/011316_Alex_23.mzXML$401,581,765|../MS/011316_Alex_19.mzXML$19,121,497,686
+```
+
+This means that compound_7 with that mass was found in the listed files; and the numbers after the "$" symbol for each file are the MS2 scan numbers in that file that correspond to this compound. You should be able to open up these scan numbers in a program like mzMINE.
