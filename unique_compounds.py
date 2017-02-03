@@ -19,7 +19,7 @@ def main(args):
 	if not args.min_count:
 		minimum = len(group_files)
 	else:
-		minimum = args.min_count
+		minimum = int(args.min_count)
 
 	#get compound data
 	#Read in compound information

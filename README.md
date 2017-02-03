@@ -116,7 +116,7 @@ This is the only portion that requires R (and the R packages vegan, ggplot2, and
 To create Principle Coordinate Analysis plots of your data, run:
 
 ```
-Rscript statistical_tests.-f compounds_table.txt -m mapping_example.txt -c grouping -g grouping
+Rscript statistical_tests.R -f compounds_table.txt -m mapping_example.txt -c grouping -g grouping
 ```
 
 Where `-c` refers to the "category" **column name** that the ANOSIM test will be run on, and `-g` refers to the "grouping" **column name** that the PCoA will be colored by. Note that in this case it is "grouping" - what we've named the third column in the mapping file. Down below is an example where we run the same script except on the "bacillus_vs_all" column. 
@@ -124,7 +124,7 @@ Where `-c` refers to the "category" **column name** that the ANOSIM test will be
 You can also do your statistics on a filtered compounds table:
 
 ```
-Rscript statistical_tests.-f compounds_table_filtered.txt -m mapping_example.txt -c bacillus_vs_all -g bacillus_vs_all
+Rscript statistical_tests.R -f compounds_table_filtered.txt -m mapping_example.txt -c bacillus_vs_all -g bacillus_vs_all
 ```
 
 If you'd like to change the look or style of the PCoA's feel free to edit this R script! It is very simple and easy to edit if you've used R or ggplot2 before.
