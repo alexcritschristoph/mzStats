@@ -1,5 +1,4 @@
 from pyteomics import mzxml
-from  sklearn.metrics.pairwise import cosine_similarity
 import math
 import numpy as np
 import sys
@@ -211,11 +210,9 @@ def compare_samples(samples_data, output_file):
 	print len(compounds)
 	#Write data table to CSV
 
-	line = "Compound,Mass,"
+	line = "Compound,Mass"
 	for sample in samples_data:
-		line = line + sample + ","
-	line.rstrip(",")
-	
+		line = line + "," + sample
 
 	f = open(output_file, 'w+')
 	f2 = open(output_file + "_spectra.txt", 'w+')

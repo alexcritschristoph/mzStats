@@ -33,9 +33,8 @@ def main(args):
 		if i == 0:
 			samples = line.strip().split(",")
 			samples.pop(0)
-			samples.pop()
 			samples.pop(0)
-			print samples
+			print sorted(samples)
 			for sample in samples:
 				compound_abundances[sample] = {}
 		else:
@@ -82,7 +81,7 @@ def main(args):
 if __name__ == '__main__':
 
 	__author__ = "Alex Crits-Christoph"
-	parser = argparse.ArgumentParser(description='Filters an MZstats compound table by removing compounds found in controls, small compounds, and singletons.')
+	parser = argparse.ArgumentParser(description='Filters an MZstats compound table by finding compounds unique to one condition (e.g. one set of replicates) that are not found in other samples in the dataset.')
 	parser.add_argument('-i','--input', help='Path to input compound table',required=True)
 	parser.add_argument('-m','--mapping', help='Path to input mapping file',required=True)
 	parser.add_argument('-c','--category', help="Name of group to find unique compounds for in the 3rd column of the mapping file.", required=True)

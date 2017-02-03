@@ -31,6 +31,7 @@ map = map[order(map$file),]
 map$file = as.character(map$file)
 map$file = gsub('/', '.', map$file)
 data = as.matrix(data[ , order(names(data))])
+data = data[,map$file]
 
 # #Create two distance matrices: jaccard and bray-curtis
 distances = vegdist(log(1+t(data)), method="jaccard")
@@ -42,11 +43,11 @@ pcoa2 = cmdscale(distances2)
 
 #Output results
 png("pcoa_jaccard.png", width=600, height=400)
-qplot(pcoa[,1], pcoa[,2], colour=map[,opt$grouping]) + geom_line()
+qplot(pcoa[,1], pcoa[,2], colour=map[,opt$grouping]) + geom_line() + labs(colour=opt$grouping)
 dev.off()
 
 png("pcoa_bray.png", width=600, height=400)
-qplot(pcoa2[,1], pcoa2[,2], colour=map[,opt$grouping]) + geom_line()
+qplot(pcoa2[,1], pcoa2[,2], colour=map[,opt$grouping]) + geom_line() + labs(colour=opt$grouping)
 dev.off()
 
 #Run ANOSIM for categorical variables

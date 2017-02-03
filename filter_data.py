@@ -51,9 +51,9 @@ def main(args):
 	f.close()
 
 	f = open(input_file.split(".")[0] + '_filtered.txt', 'w+')
-	f.write("Compound,Mass,")
+	f.write("Compound,Mass")
 	for sample in sorted(compound_abundances.keys()):
-		f.write(sample + ",")
+		f.write("," + sample)
 	f.write("\n")
 
 	#for every peak, if it is not found in media, write the  out again
@@ -81,9 +81,9 @@ def main(args):
 
 				#If minimum mz
 				if (not args.min_mz) or (float(compound_name_to_mz[compound].split("+")[0]) >= float(args.min_mz)):
-					f.write(compound + "," + compound_name_to_mz[compound] + ",")
+					f.write(compound + "," + compound_name_to_mz[compound])
 					for sample in sorted(compound_abundances.keys()):
-						f.write(str(compound_abundances[sample][compound]) + ",")
+						f.write("," + str(compound_abundances[sample][compound]))
 					f.write("\n")
 
 	f.close()
