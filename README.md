@@ -2,7 +2,7 @@
 Statistical tools for comparing MS2 spectra of complex biological samples
 
 Requirements:
-*Python: pyteomics, matplotlib, numpy, scipy, sklearn, argparse.*
+*Python: pyteomics, matplotlib, numpy, scipy, lxml, sklearn, argparse.*
 
 *R: ggplot2, vegan, optparse.*
 
