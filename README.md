@@ -16,7 +16,7 @@ Requirements:
 
 Skinnider MA, Dejong CA, Rees PN, Johnston CW, Li H, Webster ALH, Wyatt MA, Magarvey NA (2015). Genomes to natural products PRediction Informatics for Secondary Metabolomes (PRISM). Nucleic Acids Research, 16, 9645-62. doi: 10.1093/nar/gkv1012
 
-[CFM-ID](https://sourceforge.net/p/cfm-id/wiki/Home/) - for predicting the fragmentation spectrum for a compound.
+[CFM-ID](http://cfmid.wishartlab.com/predict) - for predicting the fragmentation spectrum for a compound. Super cool! For an example [see this](http://cfmid.wishartlab.com/queries/259302b9cf3cde8a2443f0cc3806db2582ce01d5).
 
 Allen, Felicity, et al. "CFM-ID: a web server for annotation, spectrum prediction and metabolite identification from tandem mass spectra." Nucleic acids research 42.W1 (2014): W94-W99.
 
