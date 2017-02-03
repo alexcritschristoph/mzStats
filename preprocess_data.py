@@ -55,8 +55,8 @@ def preprocess_sample(sample):
 			base_peaks[num] = {"num":num, "base_mz":base_mz, "intensities":intensities, "mzs":mzs, "precursor_intensity": precursor_intensity}
 			all_peaks = all_peaks + mzs.tolist()
 
-	peak_min = math.floor(min(all_peaks))
-	peak_max = math.ceil(max(all_peaks))
+	peak_min = int(math.floor(min(all_peaks)))
+	peak_max = int(math.ceil(max(all_peaks)))
 
 	#Get rid of really big variables...
 	all_peaks = None
