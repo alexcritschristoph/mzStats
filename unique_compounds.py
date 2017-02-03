@@ -34,7 +34,6 @@ def main(args):
 			samples = line.strip().split(",")
 			samples.pop(0)
 			samples.pop(0)
-			print sorted(samples)
 			for sample in samples:
 				compound_abundances[sample] = {}
 		else:
@@ -52,9 +51,9 @@ def main(args):
 
 	#For each comound: is it found in > n members of the group and NOT found in any other sample?
 	f = open('compound_table_unique_' + args.category + '.txt', 'w+')
-	f.write("Compound,Mass,")
+	f.write("Compound,Mass")
 	for sample in sorted(compound_abundances.keys()):
-		f.write(sample + ",")
+		f.write("," + sample)
 	f.write("\n")
 
 	for compound in all_compounds:
@@ -71,9 +70,9 @@ def main(args):
 					break
 
 		if not found and count_good >= minimum:
-			f.write(compound + "," + compound_name_to_mz[compound] + ",")
+			f.write(compound + "," + compound_name_to_mz[compound])
 			for sample in sorted(compound_abundances.keys()):
-				f.write(str(compound_abundances[sample][compound]) + ",")
+				f.write("," + str(compound_abundances[sample][compound]))
 			f.write("\n")
 	f.close()
 

@@ -19,8 +19,6 @@ def main(args):
 			samples = line.strip().split(",")
 			samples.pop(0)
 			samples.pop(0)
-			samples.pop()
-			print len(samples)
 			for sample in samples:
 				compound_abundances[sample] = {}
 		else:
